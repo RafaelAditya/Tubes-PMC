@@ -7,7 +7,7 @@
 
 #define KEY_LEN 16
 #define IV_LEN 12
-#define MAX_MSG_LEN 10
+#define MAX_MSG_LEN 1024
 
 int main()
 {
@@ -20,16 +20,17 @@ int main()
 
     // Prompt user for key and IV
     printf("Enter 16-byte key: ");
-    fread(key, 1, KEY_LEN, stdin);
+    scanf("%s", &key);
     // mysecretkey12345
 
     printf("Enter 12-byte IV: ");
-    fread(iv, 1, IV_LEN, stdin);
+    scanf("%s", &iv);
     // myniceiv789
 
     // Prompt user for plaintext
     printf("Enter plaintext (max %d bytes): ", MAX_MSG_LEN);
-    plaintext_len = fread(plaintext, 1, MAX_MSG_LEN, stdin);
+    scanf("%s", &plaintext);
+    plaintext_len = strlen(plaintext);
     // abcdefghij
 
     // Encrypt the plaintext
