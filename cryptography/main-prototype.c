@@ -27,9 +27,12 @@ int main()
     int encrypted = crypto_aead_encrypt(ciphertext, &ciphertext_len, plaintext, plaintext_len, NULL, 0, NULL, iv, key);
     if (encrypted == 0)
     {
-        // Print the ciphertext
-        printf("Ciphertext (length %llu): %1023s", ciphertext_len, ciphertext);
-        fwrite(ciphertext, 1, ciphertext_len, stdout);
+        // Print the ciphertext as a string
+        printf("Ciphertext (length %llu): ", ciphertext_len);
+        for (unsigned long long i = 0; i < ciphertext_len; i++)
+        {
+            printf("%c", ciphertext[i]);
+        }
         printf("\n");
     }
     else
@@ -38,29 +41,36 @@ int main()
         return 1;
     }
 
-    // Promptuser for ciphertext2
+    // Prompt user for ciphertext2
     unsigned char ciphertext2[MAX_MSG_LEN];
+
+    unsigned long long ciphertext2_len;
     printf("Enter ciphertext2 (max %d bytes): ", MAX_MSG_LEN);
     scanf("%1023s", ciphertext2);
-    int ciphertext2_len = strlen(ciphertext2);
-    if (ciphertext == ciphertext2){
-        // Decrypt the ciphertext
+    ciphertext2_len = strlen(ciphertext2);
+    printf("\n Panjang 1 %d", ciphertext_len);
+    printf("\n Panjang 2 %d", ciphertext2_len);
+    if (ciphertext == ciphertext2)
+
+    {
+        printf("Betul");
+    }
+    // Decrypt the ciphertext
     unsigned char decrypted_plaintext[MAX_MSG_LEN];
-    unsigned long long decrypted_plaintext_len = 0;
+    unsigned long long decrypted_plaintext_len = plaintext_len;
     int decrypted = crypto_aead_decrypt(decrypted_plaintext, &decrypted_plaintext_len, NULL, ciphertext2, ciphertext2_len, NULL, 0, iv, key);
+    printf("%d", decrypted);
 
     if (decrypted == 0)
     {
         // Print the decrypted plaintext
-        printf("Decrypted plaintext (length %llu): %s", decrypted_plaintext_len, decrypted_plaintext);
+        printf("Decrypted plaintext (length %llu): %s ", decrypted_plaintext_len, decrypted_plaintext);
         printf("\n");
     }
     else
     {
         printf("Decryption failed!\n");
-        return 1;
     }
-    }
-    
+
     return 0;
 }
