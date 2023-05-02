@@ -11,20 +11,20 @@
 
 int main()
 {
-    unsigned char key[KEY_LEN];
-    unsigned char iv[IV_LEN];
+    unsigned char key[KEY_LEN] = "mysecretkey1234";
+    unsigned char iv[IV_LEN] = "myniceiv789";
     unsigned char plaintext[MAX_MSG_LEN];
     unsigned char ciphertext[MAX_MSG_LEN];
     unsigned long long ciphertext_len = 0;
     unsigned long long plaintext_len = 0;
 
     // Prompt user for key and IV
-    printf("Enter 16-byte key: ");
-    scanf("%s", &key);
+    // printf("Enter 16-byte key: ");
+    // scanf("%s", &key);
     // mysecretkey12345
 
-    printf("Enter 12-byte IV: ");
-    scanf("%s", &iv);
+    // printf("Enter 12-byte IV: ");
+    // scanf("%s", &iv);
     // myniceiv789
 
     // Prompt user for plaintext
@@ -57,25 +57,6 @@ int main()
         // Print the decrypted plaintext
         printf("Decrypted plaintext (length %llu): ", decrypted_plaintext_len);
         fwrite(decrypted_plaintext, 1, decrypted_plaintext_len, stdout);
-        printf("\n");
-    }
-    else
-    {
-        printf("Decryption failed!\n");
-    }
-
-    unsigned char ciphertext2[MAX_MSG_LEN];
-    memcpy(ciphertext2, ciphertext, ciphertext_len);
-    unsigned long long ciphertext2_len = ciphertext_len;
-    unsigned char decrypted2_plaintext[MAX_MSG_LEN];
-    unsigned long long decrypted2_plaintext_len = 0;
-    int decrypted2 = crypto_aead_decrypt(decrypted2_plaintext, &decrypted2_plaintext_len, NULL, ciphertext2, ciphertext2_len, NULL, 0, iv, key);
-    if (decrypted2 == 0)
-    {
-        // Print the decrypted plaintext
-        printf("Decrypted plaintext 2(length %llu): %.*s\n", decrypted2_plaintext_len, decrypted2_plaintext_len, decrypted2_plaintext);
-
-        // fwrite(decrypted_plaintext, 1, decrypted_plaintext_len, stdout);
         printf("\n");
     }
     else
