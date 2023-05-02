@@ -28,10 +28,10 @@ int main()
     if (encrypted == 0)
     {
         // Print the ciphertext as a string
-        printf("Ciphertext (length %llu): ", ciphertext_len);
+        printf("Ciphertext : ");
         for (unsigned long long i = 0; i < ciphertext_len; i++)
         {
-            printf("%c", ciphertext[i]);
+            printf("%02X", ciphertext[i]);
         }
         printf("\n");
     }
@@ -43,28 +43,25 @@ int main()
 
     // Prompt user for ciphertext2
     unsigned char ciphertext2[MAX_MSG_LEN];
-
-    unsigned long long ciphertext2_len;
+    unsigned long long ciphertext2_len = 0;
+    char input[MAX_MSG_LEN * 2 + 1];
     printf("Enter ciphertext2 (max %d bytes): ", MAX_MSG_LEN);
-    scanf("%1023s", ciphertext2);
-    ciphertext2_len = strlen(ciphertext2);
-    printf("\n Panjang 1 %d", ciphertext_len);
-    printf("\n Panjang 2 %d\n", ciphertext2_len);
-    if (ciphertext == ciphertext2)
-
+    scanf("%s", input);
+    ciphertext2_len = strlen(input) / 2;
+    for (unsigned long long i = 0; i < ciphertext2_len; i++)
     {
-        printf("Betul");
+        sscanf(&input[i * 2], "%2hhx", &ciphertext2[i]);
     }
+
     // Decrypt the ciphertext
     unsigned char decrypted_plaintext[MAX_MSG_LEN];
     unsigned long long decrypted_plaintext_len = plaintext_len;
     int decrypted = crypto_aead_decrypt(decrypted_plaintext, &decrypted_plaintext_len, NULL, ciphertext2, ciphertext2_len, NULL, 0, iv, key);
-    printf("%d\n", decrypted);
 
     if (decrypted == 0)
     {
         // Print the decrypted plaintext
-        printf("Decrypted plaintext (length %llu): %s ", decrypted_plaintext_len, decrypted_plaintext);
+        printf("Decrypted plaintext : %s ", decrypted_plaintext);
         printf("\n");
     }
     else
