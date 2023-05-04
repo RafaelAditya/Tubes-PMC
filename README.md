@@ -1,4 +1,4 @@
-# Securing UAV Communication with TinyJAMBU Cryptography: A Robust Approach to Counter Cybersecurity Threats
+# Securing UAV Communication with TinyJAMBU Cryptography
 Securing UAV Communication with TinyJAMBU Cryptography
 This project aims to develop a robust approach to secure UAV communication using the TinyJAMBU cryptography algorithm. As UAVs heavily rely on wireless communication networks to operate, they are vulnerable to various cyber attacks that compromise the confidentiality, integrity, and availability of communication. Therefore, cryptography is a promising solution to address these challenges.
 
