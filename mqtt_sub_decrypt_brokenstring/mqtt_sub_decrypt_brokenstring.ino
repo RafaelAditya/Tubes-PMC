@@ -12,8 +12,8 @@
 #define IV_LEN 12
 #define MAX_MSG_LEN 1024
 
-const char* ssid = "2Bro_3";
-const char* password = "abad21beda";
+const char* ssid = "Rapael gimang";
+const char* password = "katasandi";
 const char* mqtt_server = "broker.mqtt-dashboard.com";
 
 WiFiClient espClient;
@@ -48,52 +48,31 @@ void setup_wifi() {
 }
 
 void callback(char* topic, byte* payload, unsigned int length) {
-  unsigned long startTime = millis(); // Waktu awal
   unsigned char key[KEY_LEN] = "mysecretkey1234";
   unsigned char iv[IV_LEN] = "myniceiv78";
-  unsigned char plaintext[MAX_MSG_LEN] = {0};
   unsigned char ciphertext[MAX_MSG_LEN] = {0};
 
   unsigned long long ciphertext_len = 0;
-  unsigned long long plaintext_len = 0;
-
 
   Serial.print("Message arrived [");
   Serial.print(topic);
   Serial.print("] :");
   
-  // Mengisi array ciphertext dengan data dari payload
-  // for (int i = 0; i < length; i += 2) {
-  //   char hex[3] = {payload[i], payload[i+1], '\0'};
-  //   unsigned char value = strtol(hex, NULL, 16);
-  //   ciphertext[i/2] = value;
-  //   ciphertext_len++;
-  // }
-
-  unsigned long endTime = millis(); // Waktu akhir
-
   // Mengisi array ciphertext dengan data dari payload dengan handling
-  for (int i = 0; i < length; i += 2) {
-    char hex[3] = {payload[i], payload[i+1], '\0'};
-    char* endptr;
-    unsigned long value = strtol(hex, &endptr, 16);
-    if (*endptr != '\0') {
-      Serial.println("Payload data is Fake!");
-      return;
-    }
-    ciphertext[i/2] = value;
+  for (int i = 0; i < length; i++) {
+    ciphertext[i] = payload[i];
     ciphertext_len++;
   }
 
-  unsigned long decryptionStartTime = millis(); // Waktu awal proses dekripsi
+  for (int i = 0; i < length; i++) {
+    Serial.write(payload[i]);
+  }
+  Serial.println();
 
   // Dekripsi ciphertext dan mencetak decrypted_plaintext sebagai string
   unsigned char decrypted_plaintext[MAX_MSG_LEN] = {0};
   unsigned long long decrypted_plaintext_len = MAX_MSG_LEN;
   int decrypted = crypto_aead_decrypt(decrypted_plaintext, &decrypted_plaintext_len, NULL, ciphertext, ciphertext_len, NULL, 0, iv, key);
-
-  unsigned long decryptionEndTime = millis(); // Waktu akhir proses dekripsi
-  unsigned long decryptionExecutionTime = decryptionEndTime - decryptionStartTime; // Selisih waktu eksekusi dekripsi
 
   if (decrypted == 0) {
     Serial.print("Decrypted plaintext: ");
@@ -101,18 +80,7 @@ void callback(char* topic, byte* payload, unsigned int length) {
   } else {
     Serial.println("Decryption failed!");
   }
-  
-  unsigned long executionTime = endTime - startTime; // Selisih waktu eksekusi
-
-  Serial.print("Decryption execution time: ");
-  Serial.print(decryptionExecutionTime);
-  Serial.println(" ms");
-
-  Serial.print("Callback execution time: ");
-  Serial.print(executionTime);
-  Serial.println(" ms");
 }
-
 
 void reconnect() {
   // Loop until we're reconnected

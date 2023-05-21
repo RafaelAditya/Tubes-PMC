@@ -12,8 +12,8 @@
 #define IV_LEN 12
 #define MAX_MSG_LEN 1024
 
-const char* ssid = "Rapael gimang";
-const char* password = "katasandi";
+const char* ssid = "2Bro_3";
+const char* password = "abad21beda";
 const char* mqtt_server = "broker.mqtt-dashboard.com";
 
 WiFiClient espClient;
@@ -56,20 +56,20 @@ void callback(char* topic, byte* payload, unsigned int length) {
   }
   Serial.println();
 
-  Serial.println("Payload length: " + String(length)); // Menampilkan panjang payload
-  char receivedPayload[length + 1];
-  memcpy(receivedPayload, payload, length);
-  receivedPayload[length] = '\0';
+  // Serial.println("Payload length: " + String(length)); // Menampilkan panjang payload
+  // char receivedPayload[length + 1];
+  // memcpy(receivedPayload, payload, length);
+  // receivedPayload[length] = '\0';
 
-  Serial.println(strcmp(receivedPayload, "on"));
-  Serial.println(strcmp(receivedPayload, "off"));
+  // Serial.println(strcmp(receivedPayload, "on"));
+  // Serial.println(strcmp(receivedPayload, "off"));
 
-  // Mengendalikan LED berdasarkan pesan yang diterima
-  if (strcmp(receivedPayload, "on") == 0) {
-    digitalWrite(BUILTIN_LED, LOW); // Menyalakan LED
-  } else if (strcmp(receivedPayload, "off") == 0) {
-    digitalWrite(BUILTIN_LED, HIGH); // Mematikan LED
-  }
+  // // Mengendalikan LED berdasarkan pesan yang diterima
+  // if (strcmp(receivedPayload, "on") == 0) {
+  //   digitalWrite(BUILTIN_LED, LOW); // Menyalakan LED
+  // } else if (strcmp(receivedPayload, "off") == 0) {
+  //   digitalWrite(BUILTIN_LED, HIGH); // Mematikan LED
+  // }
 }
 
 void reconnect() {
@@ -105,6 +105,7 @@ void setup() {
 }
 
 void loop() {
+  static int messageCounter = 1;  // Counter untuk menambah angka pada pesan
 
   if (!client.connected()) {
     reconnect();
@@ -119,14 +120,11 @@ void loop() {
   unsigned long long ciphertext_len = 0;
   unsigned long long plaintext_len = 0;
 
-  Serial.println("Enter plaintext (max 1023 bytes): ");
-  while (Serial.available() == 0) {
-    ; // tunggu input pengguna
-  }
-  plaintext_len = Serial.readBytesUntil('\n', plaintext, MAX_MSG_LEN);
+  // Membuat pesan dengan format "test_x" dengan nilai x pada messageCounter
+  snprintf((char*)plaintext, MAX_MSG_LEN, "altitude_%d;speed_%d;orientation_%d", messageCounter, messageCounter, messageCounter);
+  plaintext_len = strlen((char*)plaintext);
 
-  // Tambahkan null-terminator ke plaintext
-  plaintext[plaintext_len] = '\0';
+  unsigned long startTime = millis(); // Waktu awal
 
   int encrypted = crypto_aead_encrypt(ciphertext, &ciphertext_len, plaintext, plaintext_len, NULL, 0, NULL, iv, key);
   if (encrypted == 0) {
@@ -136,11 +134,11 @@ void loop() {
     }
     Serial.println("");
     // Convert ciphertext to hexadecimal string
-    char hex_ciphertext[ciphertext_len*2 + 1];
+    char hex_ciphertext[ciphertext_len * 2 + 1];
     for (unsigned long long i = 0; i < ciphertext_len; i++) {
-      sprintf(&hex_ciphertext[i*2], "%02X", ciphertext[i]);
+      sprintf(&hex_ciphertext[i * 2], "%02X", ciphertext[i]);
     }
-    hex_ciphertext[ciphertext_len*2] = '\0';
+    hex_ciphertext[ciphertext_len * 2] = '\0';
     // Publish encrypted message to "kelompok11" topic
     if (client.publish("kelompok11", hex_ciphertext)) {
       Serial.println("Encrypted message published");
@@ -150,4 +148,14 @@ void loop() {
   } else {
     Serial.println("Encryption failed!");
   }
+
+  unsigned long endTime = millis(); // Waktu akhir
+  unsigned long executionTime = endTime - startTime; // Selisih waktu eksekusi
+
+  Serial.print("Encryption execution time: ");
+  Serial.print(executionTime);
+  Serial.println(" ms");
+
+  messageCounter++;  // Menambah counter setelah setiap pengiriman pesan
+  delay(2000);       // Menunda selama 1 detik
 }

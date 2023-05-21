@@ -132,17 +132,11 @@ void loop() {
   if (encrypted == 0) {
     Serial.print("Ciphertext : ");
     for (unsigned long long i = 0; i < ciphertext_len; i++) {
-      Serial.printf("%02X", ciphertext[i]);
+      Serial.write(ciphertext[i]);  // Send ciphertext byte by byte
     }
     Serial.println("");
-    // Convert ciphertext to hexadecimal string
-    char hex_ciphertext[ciphertext_len*2 + 1];
-    for (unsigned long long i = 0; i < ciphertext_len; i++) {
-      sprintf(&hex_ciphertext[i*2], "%02X", ciphertext[i]);
-    }
-    hex_ciphertext[ciphertext_len*2] = '\0';
     // Publish encrypted message to "kelompok11" topic
-    if (client.publish("kelompok11", hex_ciphertext)) {
+    if (client.publish("kelompok11", ciphertext, ciphertext_len)) {
       Serial.println("Encrypted message published");
     } else {
       Serial.println("Failed to publish encrypted message");
