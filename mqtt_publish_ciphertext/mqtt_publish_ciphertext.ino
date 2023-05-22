@@ -48,28 +48,28 @@ void setup_wifi() {
 }
 
 void callback(char* topic, byte* payload, unsigned int length) {
-  Serial.print("Message arrived [");
-  Serial.print(topic);
-  Serial.print("] :");
-  for (int i = 0; i < length; i++) {
-    Serial.print((char)payload[i]);
-  }
-  Serial.println();
+//   Serial.print("Message arrived [");
+//   Serial.print(topic);
+//   Serial.print("] :");
+//   for (int i = 0; i < length; i++) {
+//     Serial.print((char)payload[i]);
+//   }
+//   Serial.println();
 
-  Serial.println("Payload length: " + String(length)); // Menampilkan panjang payload
-  char receivedPayload[length + 1];
-  memcpy(receivedPayload, payload, length);
-  receivedPayload[length] = '\0';
+//   Serial.println("Payload length: " + String(length)); // Menampilkan panjang payload
+//   char receivedPayload[length + 1];
+//   memcpy(receivedPayload, payload, length);
+//   receivedPayload[length] = '\0';
 
-  Serial.println(strcmp(receivedPayload, "on"));
-  Serial.println(strcmp(receivedPayload, "off"));
+//   Serial.println(strcmp(receivedPayload, "on"));
+//   Serial.println(strcmp(receivedPayload, "off"));
 
-  // Mengendalikan LED berdasarkan pesan yang diterima
-  if (strcmp(receivedPayload, "on") == 0) {
-    digitalWrite(BUILTIN_LED, LOW); // Menyalakan LED
-  } else if (strcmp(receivedPayload, "off") == 0) {
-    digitalWrite(BUILTIN_LED, HIGH); // Mematikan LED
-  }
+//   // Mengendalikan LED berdasarkan pesan yang diterima
+//   if (strcmp(receivedPayload, "on") == 0) {
+//     digitalWrite(BUILTIN_LED, LOW); // Menyalakan LED
+//   } else if (strcmp(receivedPayload, "off") == 0) {
+//     digitalWrite(BUILTIN_LED, HIGH); // Mematikan LED
+//   }
 }
 
 void reconnect() {
