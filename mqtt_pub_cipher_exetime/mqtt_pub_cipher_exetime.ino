@@ -48,13 +48,13 @@ void setup_wifi() {
 }
 
 void callback(char* topic, byte* payload, unsigned int length) {
-  Serial.print("Message arrived [");
-  Serial.print(topic);
-  Serial.print("] :");
-  for (int i = 0; i < length; i++) {
-    Serial.print((char)payload[i]);
-  }
-  Serial.println();
+  // Serial.print("Message arrived [");
+  // Serial.print(topic);
+  // Serial.print("] :");
+  // for (int i = 0; i < length; i++) {
+  //   Serial.print((char)payload[i]);
+  // }
+  // Serial.println();
 
   // Serial.println("Payload length: " + String(length)); // Menampilkan panjang payload
   // char receivedPayload[length + 1];
@@ -106,6 +106,9 @@ void setup() {
 
 void loop() {
   static int messageCounter = 1;  // Counter untuk menambah angka pada pesan
+  // uint32_t freeHeapBytes = heap_caps_get_free_size(MALLOC_CAP_DEFAULT);
+  // uint32_t totalHeapBytes = heap_caps_get_total_size(MALLOC_CAP_DEFAULT);
+  // float percentageHeapFree = freeHeapBytes * 100.0f / (float)totalHeapBytes;
 
   if (!client.connected()) {
     reconnect();
@@ -124,7 +127,7 @@ void loop() {
   snprintf((char*)plaintext, MAX_MSG_LEN, "altitude_%d;speed_%d;orientation_%d", messageCounter, messageCounter, messageCounter);
   plaintext_len = strlen((char*)plaintext);
 
-  unsigned long startTime = millis(); // Waktu awal
+  // unsigned long startTime = micros(); // Waktu awal
 
   int encrypted = crypto_aead_encrypt(ciphertext, &ciphertext_len, plaintext, plaintext_len, NULL, 0, NULL, iv, key);
   if (encrypted == 0) {
@@ -149,13 +152,15 @@ void loop() {
     Serial.println("Encryption failed!");
   }
 
-  unsigned long endTime = millis(); // Waktu akhir
-  unsigned long executionTime = endTime - startTime; // Selisih waktu eksekusi
+  // unsigned long endTime = micros(); // Waktu akhir
+  // unsigned long executionTime = endTime - startTime; // Selisih waktu eksekusi
 
-  Serial.print("Encryption execution time: ");
-  Serial.print(executionTime);
-  Serial.println(" ms");
+  // Serial.print("Encryption execution time: ");
+  // Serial.print(executionTime);
+  // Serial.println(" us");
+
+  // Serial.printf("[Memory] %.1f%% free - %d of %d bytes free\n", percentageHeapFree, freeHeapBytes, totalHeapBytes);
 
   messageCounter++;  // Menambah counter setelah setiap pengiriman pesan
-  delay(2000);       // Menunda selama 1 detik
+  // delay(2000);       // Menunda selama 1 detik
 }

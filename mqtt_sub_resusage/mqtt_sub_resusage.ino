@@ -4,9 +4,8 @@
 #include <stdlib.h>
 #include <string.h>
 #include <Wire.h>
-#include "api.h"
-#include "encrypt.h"
-// Print to serial
+// #include "api.h"
+// #include "encrypt.h"
 
 // Update these with values suitable for your network.
 #define KEY_LEN 16
@@ -52,71 +51,24 @@ void callback(char* topic, byte* payload, unsigned int length) {
   uint32_t freeHeapBytes = heap_caps_get_free_size(MALLOC_CAP_DEFAULT);
   uint32_t totalHeapBytes = heap_caps_get_total_size(MALLOC_CAP_DEFAULT);
   float percentageHeapFree = freeHeapBytes * 100.0f / (float)totalHeapBytes;
-
-  unsigned long startTime = micros(); // Waktu awal
-  unsigned char key[KEY_LEN] = "mysecretkey1234";
-  unsigned char iv[IV_LEN] = "myniceiv78";
-  unsigned char plaintext[MAX_MSG_LEN] = {0};
-  unsigned char ciphertext[MAX_MSG_LEN] = {0};
-
-  unsigned long long ciphertext_len = 0;
-  unsigned long long plaintext_len = 0;
-
+  // unsigned long startTime = micros(); // Waktu awal
 
   Serial.print("Message arrived [");
   Serial.print(topic);
   Serial.print("] :");
-  
-  // Mengisi array ciphertext dengan data dari payload
-  // for (int i = 0; i < length; i += 2) {
-  //   char hex[3] = {payload[i], payload[i+1], '\0'};
-  //   unsigned char value = strtol(hex, NULL, 16);
-  //   ciphertext[i/2] = value;
-  //   ciphertext_len++;
-  // }
 
-  unsigned long endTime = micros(); // Waktu akhir
-
-  // Mengisi array ciphertext dengan data dari payload dengan handling
-  for (int i = 0; i < length; i += 2) {
-    char hex[3] = {payload[i], payload[i+1], '\0'};
-    char* endptr;
-    unsigned long value = strtol(hex, &endptr, 16);
-    if (*endptr != '\0') {
-      Serial.println("Payload data is Fake!");
-      return;
-    }
-    ciphertext[i/2] = value;
-    ciphertext_len++;
+  // Mencetak payload sebagai string
+  for (int i = 0; i < length; i++) {
+    Serial.print((char)payload[i]);
   }
+  Serial.println();
 
-  unsigned long decryptionStartTime = micros(); // Waktu awal proses dekripsi
+  // unsigned long endTime = micros(); // Waktu akhir
+  // unsigned long executionTime = endTime - startTime; // Selisih waktu eksekusi
 
-  // Dekripsi ciphertext dan mencetak decrypted_plaintext sebagai string
-  unsigned char decrypted_plaintext[MAX_MSG_LEN] = {0};
-  unsigned long long decrypted_plaintext_len = MAX_MSG_LEN;
-  int decrypted = crypto_aead_decrypt(decrypted_plaintext, &decrypted_plaintext_len, NULL, ciphertext, ciphertext_len, NULL, 0, iv, key);
-
-  unsigned long decryptionEndTime = micros(); // Waktu akhir proses dekripsi
-  unsigned long decryptionExecutionTime = decryptionEndTime - decryptionStartTime; // Selisih waktu eksekusi dekripsi
-
-  if (decrypted == 0) {
-    Serial.print("Decrypted plaintext: ");
-    Serial.println((char*)decrypted_plaintext);
-  } else {
-    Serial.println("Decryption failed!");
-  }
-  
-  unsigned long executionTime = endTime - startTime; // Selisih waktu eksekusi
-
-  Serial.print("Decryption execution time: ");
-  Serial.print(decryptionExecutionTime);
-  Serial.println(" us");
-
-  Serial.print("Callback execution time: ");
-  Serial.print(executionTime);
-  Serial.println(" us");
-
+  // Serial.print("Callback execution time: ");
+  // Serial.print(executionTime);
+  // Serial.println(" ms");
   Serial.printf("[Memory] %.1f%% free - %d of %d bytes free\n", percentageHeapFree, freeHeapBytes, totalHeapBytes);
 }
 
